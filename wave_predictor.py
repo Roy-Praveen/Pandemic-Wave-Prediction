@@ -191,11 +191,13 @@ print("India will have the peak of the 4th wave %d days from the peak of the 3rd
 
 
 
-#--------------------------------------------------------------------------------------------------------------------------------
+#--------------------------------------------------------------------------------------------------------------------------------------------------
+#This section is just another way of approaching the same problem 
+#Insted of finding the best country which had the previous waves like India had we will take the average of all the countries included in the model
 #The averages distance between the peaks 3 and 4
 #The variance of the interpeak distances
 #Thus a mean for the 4th peak and the distribution corresponding to the start of the 4th wave is given
-#--------------------------------------------------------------------------------------------------------------------------------
+#--------------------------------------------------------------------------------------------------------------------------------------------------
 dist_array=[]
 for country in cou_dist.keys():
 	dist_array.append(cou_dist[country][2])
