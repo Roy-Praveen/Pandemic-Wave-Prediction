@@ -1,3 +1,13 @@
+'''
+Of the countries which have vaccination percentage and population density close to India, we want to figure out the countires which have
+had or having a fouth wave. 
+The logic behind this exercise is to find the
+	-Difference in the number of days between the 3rd and 4th wave
+	-Difference in the distributions (slope, mean, variance)
+	-Compare it with India
+	-Predict the 4th wave
+	-Gaussian models are not included in this program
+'''
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
@@ -12,6 +22,8 @@ print(dt)
 print(dt.columns)
 
 #-------------------------------------------------------------------------------------------------------------------------
+#Countries with population density close to India are filtered out
+#-------------------------------------------------------------------------------------------------------------------------
 pop_den = dt.loc[dt['iso_code']=='IND','population_density']
 print(pop_den)
 pop_den_ind = max(pop_den)
@@ -21,48 +33,41 @@ print("Population Density of India is",pop_den_ind)
 dt1 = dt.loc[dt['population_density'] >= pop_den_ind-100]
 print(dt1)
 
-#print(dt1.iso_code.unique())-----------------Prints the list of conuntries with close to population density as India
+#print(dt1.iso_code.unique())-----------------Prints the list of countries with close to population density as India
 
 print("Poulation Density Filter has been applied")
 
+#---------------------------------------------------------------------------------------------------------------------------
+#Countries with vaccination per hundred close to or better than India are filtered out
 #---------------------------------------------------------------------------------------------------------------------------
 
 dt1['people_fully_vaccinated_per_hundred'] = dt1['people_fully_vaccinated_per_hundred'].replace(np.nan, 0)
 print(dt1)
 
-pep_vac = dt1.loc[dt1['iso_code']=='IND','people_fully_vaccinated_per_hundred'] #This should give you a value of India = 58.77
+pep_vac = dt1.loc[dt1['iso_code']=='IND','people_fully_vaccinated_per_hundred']
 print(pep_vac)
 pep_vac_per_hun = max(pep_vac)
-print("People Fully Vaccinated in India per 100 Indians",pep_vac_per_hun)
+print("People Fully Vaccinated in India per 100 Indians is",pep_vac_per_hun)
 
 
 
 dt2 = dt1.loc[dt1['people_fully_vaccinated_per_hundred'] > pep_vac_per_hun-5]
 print(dt2)
-dt2lis= dt2.iso_code.unique()#------------------Prints list of countries with vaccination percentage close to India
+dt2lis= dt2.iso_code.unique()#------------------Prints list of countries with vaccination percentage close to India after having applied these filters
 
-'''
-dt3 = dt2.loc[dt2['people_fully_vaccinated_per_hundred'] > pep_vac_per_hun+5]
-print(dt3)
-dt3lis= dt3.iso_code.unique()
 
-print(np.setdiff1d(dt2lis,dt3lis))
-'''
 #-----------------------------------------------------------------------------------------------------------------------------
-'''
-Of the countries which have vaccination percentage and population density close to India, we want to figure out the countires which have
-had or having a fouth wave. 
-The logic behind this exercise is to find the
-	-difference in the number of days between the 3rd and 4th wave
-	-difference in the distributions (slope, mean, variance)
-	-compare it with India
-	-predict the 4th wave and its nature with a certain level of confidence
-'''
+#Removing India from the extracted list of countries
 #-----------------------------------------------------------------------------------------------------------------------------
 rem_ind = np.where(dt2lis == 'IND')
-dt2lis = np. delete(dt2lis, rem_ind)
+dt2lis = np.delete(dt2lis, rem_ind)
 l = len(dt2lis)
 print(l)
+
+#-----------------------------------------------------------------------------------------------------------------------------
+#This is a section where the user of this program determines countries which should be included in this model.
+#The user should include a country only if that country had had the fouth wave and the fourth wave is prominently visible
+#-----------------------------------------------------------------------------------------------------------------------------
 
 mod_country_lis= []
 
@@ -92,13 +97,10 @@ for i in range(0,l):
 	sel_butt.on_clicked(append_func)
 	plt.show()
 	
-
-	
 #----------------------------------------------------------------------------------------------------------------------------
 #Next step is to find the 4 peaks
 #Caution-- If you choose countries with more peaks or less peaks, the predictor will not work well
-#So I have decided to run a search to find the best prominence for which the "find_peaks" function will give 4 peaks
-#Yet you have to select the countries which have 4 peaks
+#This section uses the "find_peaks" function which will give 4 peaks based on prominence of the peaks
 #----------------------------------------------------------------------------------------------------------------------------
 
 def peak_finder(model_country,prom):
