@@ -4,4 +4,3 @@ This is a mini-project in which the next COVID-19 wave is predicted (If there is
 It is based on previous statistics.\
 You can alter or update the data to make predictions about forecoming waves.
 
-***More advanced version of this predictor based on Gaussians is being developed***
